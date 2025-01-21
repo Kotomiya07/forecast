@@ -135,7 +135,7 @@ def main():
     )
 
     # テスト結果の表示
-    print("\nテスト結果:")
+    print("\nTest Results:")
     print(f"MAE: {test_metrics['mae']:.4f}")
     print(f"MSE: {test_metrics['mse']:.4f}")
     print(f"RMSE: {test_metrics['rmse']:.4f}")

@@ -193,10 +193,10 @@ def load_and_preprocess_data(data_path, input_len, output_len):
     """
     # キャッシュがある場合はそこから読み込む
     if check_cache_exists(data_path, input_len, output_len):
-        print("キャッシュされた前処理済みデータを読み込んでいます...")
+        print("Load cache data...")
         return load_from_cache(data_path, input_len, output_len)
 
-    print("データの前処理を実行しています...")
+    print("Preprocess data...")
     # データの読み込み
     data = pd.read_csv(data_path, parse_dates=['date'])
     data = data[data['family'] == 'GROCERY I'].copy()
@@ -209,7 +209,7 @@ def load_and_preprocess_data(data_path, input_len, output_len):
     sequences, targets, scaler = preprocess_data(data, input_len, output_len)
 
     # 前処理済みデータをキャッシュとして保存
-    print("前処理済みデータをキャッシュに保存しています...")
+    print("Save cache data...")
     save_to_cache(sequences, targets, scaler, data_path, input_len, output_len)
 
     return sequences, targets, scaler

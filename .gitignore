@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+MANIFEST
+
+# Rye
+.python-version
+.rye/
+.venv/
+requirements.lock
+requirements-dev.lock
+
+# データとキャッシュ
+data/
+cache/
+*.csv
+*.npy
+*.joblib
+
+# 実験結果
+results/
+runs/
+*.log
+*.png
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# プロジェクト固有
+*.pth  # モデルチェックポイント

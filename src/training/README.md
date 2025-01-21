@@ -5,18 +5,19 @@
 ## ファイル構成
 
 ### trainer.py
-モデルの学習を管理するクラスと関連機能を実装。
+accelerateを使用したモデルの学習を管理するクラスと関連機能を実装。
 
 #### 主要クラス
 
 `ModelTrainer`
-- 学習プロセス全体を管理
+- accelerateを使用した効率的な学習プロセス管理
 - 主な機能：
   1. エポック単位の学習制御
   2. 損失の計算と最適化
   3. 評価指標の計算
   4. モデルの保存
   5. 進捗の表示
+  6. 分散学習のサポート
 
 #### 主要メソッド
 
@@ -30,7 +31,7 @@
    - 1エポックの学習を実行
    - バッチ単位の処理
    - 勾配計算と最適化
-   - 損失の計算
+   - accelerateによる自動デバイス管理
 
 3. `_validate_epoch()`
    - 1エポックの検証を実行
@@ -56,8 +57,16 @@
 
 ## 学習プロセスの詳細
 
-### 1. 初期化
+### 1. 初期化とデバイス設定
 ```python
+# acceleratorの初期化
+accelerator = Accelerator()
+
+# モデルとデータローダーの準備
+model, train_loader, val_loader, optimizer = accelerator.prepare(
+    model, train_loader, val_loader, optimizer
+)
+
 trainer = ModelTrainer(
     model=model,
     train_loader=train_loader,
@@ -71,17 +80,23 @@ trainer = ModelTrainer(
 )
 ```
 
-### 2. 学習ループ
+### 2. 分散学習
 ```python
-train_losses, val_losses, best_val_loss = trainer.train(
-    epochs=EPOCHS,
-    patience=EARLY_STOPPING_PATIENCE
-)
+# accelerate launchコマンドで実行
+# 単一GPU
+accelerate launch main.py
+
+# 複数GPU
+accelerate launch --multi_gpu main.py
+
+# CPU実行
+accelerate launch main.py --cpu
 ```
 
 ### 3. エポックごとの処理
 1. 訓練フェーズ
    - バッチ単位の学習
+   - accelerateによる自動デバイス管理
    - 勾配クリッピング（max_norm=3.0）
    - オプティマイザの更新
    - スケジューラの更新
@@ -136,3 +151,8 @@ train_losses, val_losses, best_val_loss = trainer.train(
 3. モデルの保存
    - 最良モデルの保持
    - 学習の再開が可能
+
+4. accelerateによる最適化
+   - 自動メモリ管理
+   - デバイス間の同期
+   - 分散学習のサポート

@@ -9,6 +9,22 @@
 - データ前処理のキャッシング機能
 - 効率的な学習プロセス
 - 詳細な評価指標の計算
+- 分散学習サポート（accelerate）
+
+## データセット
+このプロジェクトは[Store Sales - Time Series Forecasting](https://www.kaggle.com/competitions/store-sales-time-series-forecasting/overview)のデータセットを使用します。
+
+### データの準備
+1. Kaggleアカウントを作成（まだの場合）
+2. 上記リンクからデータセットをダウンロード
+3. ダウンロードしたファイルを`data/store-sales/`ディレクトリに配置：
+   ```
+   data/
+   └── store-sales/
+       ├── train.csv        # 学習データ
+       ├── test.csv         # テストデータ
+       └── sample_submission.csv
+   ```
 
 ## プロジェクト構造
 ```
@@ -57,6 +73,7 @@ forecast/
 - コサイン学習率スケジューリング
 - 複合損失関数
 - Early Stopping
+- accelerateによる分散学習サポート
 
 ### 評価指標
 - MSE（平均二乗誤差）
@@ -88,15 +105,35 @@ rye sync
 ```
 
 ### 実行方法
+
+#### 単一GPUでの実行
 ```bash
 # 仮想環境の有効化
 rye shell
 
 # 学習の実行
-python main.py
+accelerate launch main.py
 
 # 特定のシードを指定して実行
-python main.py --seed 42
+accelerate launch main.py --seed 42
+```
+
+#### 複数GPUでの実行
+```bash
+# accelerateの設定
+accelerate config
+
+# 分散学習の実行
+accelerate launch --multi_gpu main.py
+```
+
+#### CPU実行
+```bash
+# CPU実行の設定
+accelerate config default --cpu
+
+# CPU上で実行
+accelerate launch main.py
 ```
 
 ## 設定のカスタマイズ

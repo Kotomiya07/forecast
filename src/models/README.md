@@ -5,7 +5,7 @@
 ## ファイル構成
 
 ### transformer.py
-売上予測用のTransformerモデルの実装。
+売上予測用のTransformerモデルの実装。accelerateと互換性のある設計。
 
 #### 主要クラス
 
@@ -25,6 +25,10 @@
      - 位置エンコーディング
      - 中間層による特徴抽出
      - 時点ごとの予測出力層
+   - accelerateサポート：
+     - デバイス管理の自動化
+     - 分散学習への対応
+     - メモリ使用の最適化
 
 #### アーキテクチャの詳細
 
@@ -62,9 +66,10 @@
      - AdamWオプティマイザ
      - コサイン学習率スケジューリング
      - パラメータグループごとの設定
+     - accelerateとの互換性確保
 
 2. 学習制御
-   - `fix_seed()`: 乱数シードの固定
+   - `fix_seed()`: 乱数シードの固定（分散学習対応）
    - `setup_training_device()`: 学習デバイスの設定
    - `create_loss_function()`: 複合損失関数の作成
 
@@ -92,12 +97,21 @@
    - Dropoutによる正則化
    - 残差接続による勾配伝播の改善
 
+4. 分散学習対応
+   - accelerateによるデバイス管理
+   - 効率的なメモリ使用
+   - マルチGPUサポート
+
 ## 使用例
 
 ```python
 from config.config import TRANSFORMER_CONFIG
 from src.models.transformer import create_model
 from src.models.utils import create_optimizer_and_scheduler
+from accelerate import Accelerator
+
+# acceleratorの初期化
+accelerator = Accelerator()
 
 # モデルの作成
 model = create_model("transformer", input_size=14)  # 14は特徴量の次元数
@@ -109,3 +123,29 @@ optimizer, scheduler = create_optimizer_and_scheduler(
     num_epochs=1000,
     num_training_steps=len(train_loader)
 )
+
+# accelerateによるデバイス管理
+model, optimizer, train_loader, val_loader = accelerator.prepare(
+    model, optimizer, train_loader, val_loader
+)
+```
+
+## 分散学習設定
+
+### 単一GPU
+```bash
+accelerate launch main.py
+```
+
+### 複数GPU
+```bash
+# 設定の初期化
+accelerate config
+
+# 学習の実行
+accelerate launch --multi_gpu main.py
+```
+
+### CPU実行
+```bash
+accelerate launch --cpu main.py

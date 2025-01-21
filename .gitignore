@@ -16,15 +16,15 @@ requirements.lock
 requirements-dev.lock
 
 # データとキャッシュ
-data/
+/data/
 cache/
 *.csv
 *.npy
 *.joblib
 
 # 実験結果
-results/
-runs/
+/results/
+/runs/
 *.log
 *.png
 

@@ -3,13 +3,13 @@
 """
 
 # データ設定
-INPUT_SEQUENCE_LENGTH = 360  # 1年
+INPUT_SEQUENCE_LENGTH = 90  # 1年
 OUTPUT_SEQUENCE_LENGTH = 90  # 3ヶ月
 NUM_WORKERS = 16
 PIN_MEMORY = True
 
 # トレーニング設定
-BATCH_SIZE = 64  # より小さいバッチサイズで細かく学習
+BATCH_SIZE = 32  # より小さいバッチサイズで細かく学習
 EPOCHS = 1000  # エポック数を増やして学習を深める
 LEARNING_RATE = 5e-5  # より小さい学習率で安定した学習
 EARLY_STOPPING_PATIENCE = 20  # より長い忍耐値で学習を継続
